@@ -1,6 +1,8 @@
 package com.diego.babycare.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -25,8 +27,10 @@ public class Baby {
     private User user;
 
     @OneToMany(mappedBy = "baby", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Rotina> rotinas;
 
     @OneToMany(mappedBy = "baby", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Vacina> vacinas;
 }

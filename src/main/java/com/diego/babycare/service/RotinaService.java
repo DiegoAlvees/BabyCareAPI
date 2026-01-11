@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +20,10 @@ public class RotinaService {
 
     public List<Rotina> listarPorBaby(Long babyId) {
         return rotinaRepository.findByBabyId(babyId);
+    }
+
+    public Optional<Rotina> buscarPorId(Long id) {
+        return rotinaRepository.findById(id);
     }
 
     public void deletarRotina (Long rotinaId) {

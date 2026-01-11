@@ -1,6 +1,7 @@
 package com.diego.babycare.domain.model;
 
 import com.diego.babycare.utils.MapToJsonConverter;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
@@ -23,7 +24,7 @@ public class Rotina {
 
     @ManyToOne
     @JoinColumn(name = "baby_id")
-    @JsonIgnore
+    @JsonBackReference
     private Baby baby;
 
     @Convert(converter = MapToJsonConverter.class)

@@ -1,50 +1,59 @@
 package com.diego.babycare.controller;
 
-import com.diego.babycare.domain.dto.LoginRequest;
 import com.diego.babycare.domain.model.User;
 import com.diego.babycare.service.UserService;
-import com.diego.babycare.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
-
     private final UserService userService;
-    private final JwtUtil jwtUtil;
-    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login (@RequestBody LoginRequest request) {
-        var user = userService.buscarPorEmail(request.getEmail());
+    public ResponseEntity<?> login(@RequestBody User request) {
+        System.out.println("📥 [AuthController] Tentativa de login: " + request.getEmail());
 
-        if(user.isEmpty() || !passwordEncoder.matches(request.getSenha(), user.get().getSenhaHash())) {
-            return ResponseEntity.status(401).body("Email ou senha inválidos");
+        var userOptional = userService.buscarPorEmail(request.getEmail());
+
+        if (userOptional.isEmpty() || !userOptional.get().getSenhaHash().equals(request.getSenhaHash())) {
+            System.out.println("❌ [AuthController] Login falhou: credenciais inválidas");
+            return ResponseEntity.status(401).body(Map.of("error", "Email ou senha inválidos"));
         }
 
-        String token = jwtUtil.generateToken(user.get().getEmail());
-        return ResponseEntity.ok(token);
+        User user = userOptional.get();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("email", user.getEmail());
+        response.put("nome", user.getNome());
+        response.put("userId", user.getId());
+
+        System.out.println("✅ [AuthController] Login bem-sucedido: " + user.getEmail());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
+        System.out.println("📥 [AuthController] Tentativa de registro: " + user.getEmail());
 
         if (userService.buscarPorEmail(user.getEmail()).isPresent()) {
-            return ResponseEntity.badRequest().body("Email já cadastrado");
+            System.out.println("❌ [AuthController] Email já cadastrado");
+            return ResponseEntity.badRequest().body(Map.of("error", "Email já cadastrado"));
         }
 
-        user.setSenhaHash(passwordEncoder.encode(user.getSenhaHash()));
+        User createdUser = userService.criarUser(user);
 
-        userService.criarUser(user);
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Usuário criado com sucesso!");
+        response.put("email", createdUser.getEmail());
+        response.put("userId", createdUser.getId());
+        response.put("nome", createdUser.getNome());
 
-        return ResponseEntity.ok("Usuário criado com sucesso!");
+        System.out.println("✅ [AuthController] Usuário registrado: " + createdUser.getEmail());
+        return ResponseEntity.ok(response);
     }
-
 }
