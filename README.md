@@ -97,7 +97,7 @@ Siga essa ordem no Swagger para testar todos os endpoints:
   "tipo": "mamada",
   "timeStamp": "2026-01-11T10:30:00",
   "detalhes": {
-    "quantidade": "150ml",
+    "duracao": "15 minutos",
     "lado": "direito"
   }
 }
