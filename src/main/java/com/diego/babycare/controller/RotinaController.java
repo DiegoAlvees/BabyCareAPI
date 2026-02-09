@@ -40,10 +40,10 @@ public class RotinaController {
 
     @DeleteMapping("/{rotinaId}")
     public ResponseEntity<Void> deletarRotina(
-            @PathVariable Long babyId,  // ← ADICIONE ISSO
+            @PathVariable Long babyId,
             @PathVariable Long rotinaId) {
 
-        // Opcional: validar se a rotina pertence ao bebê
+
         var rotina = rotinaService.buscarPorId(rotinaId);
         if (rotina.isEmpty() || !rotina.get().getBaby().getId().equals(babyId)) {
             return ResponseEntity.notFound().build();

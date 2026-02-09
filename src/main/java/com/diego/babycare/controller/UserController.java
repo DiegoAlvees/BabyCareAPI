@@ -47,10 +47,10 @@ public class UserController {
 
         User user = userOpt.get();
 
-        // Busca todos os bebês do usuário
+
         List<Baby> babies = babyService.listarPorUsuario(id);
 
-        // Para cada bebê, busca rotinas e vacinas
+
         List<Map<String, Object>> babiesCompletos = babies.stream().map(baby -> {
             Map<String, Object> babyData = new HashMap<>();
             babyData.put("id", baby.getId());

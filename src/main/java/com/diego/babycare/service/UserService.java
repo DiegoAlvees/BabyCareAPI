@@ -12,7 +12,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     public User criarUser(User user) {
-        // Sem criptografia
+
         return userRepository.save(user);
     }
 

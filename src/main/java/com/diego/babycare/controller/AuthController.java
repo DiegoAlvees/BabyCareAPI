@@ -16,12 +16,12 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User request) {
-        System.out.println("📥 [AuthController] Tentativa de login: " + request.getEmail());
+        System.out.println("Tentativa de login: " + request.getEmail());
 
         var userOptional = userService.buscarPorEmail(request.getEmail());
 
         if (userOptional.isEmpty() || !userOptional.get().getSenhaHash().equals(request.getSenhaHash())) {
-            System.out.println("❌ [AuthController] Login falhou: credenciais inválidas");
+            System.out.println("Login falhou");
             return ResponseEntity.status(401).body(Map.of("error", "Email ou senha inválidos"));
         }
 
@@ -32,16 +32,16 @@ public class AuthController {
         response.put("nome", user.getNome());
         response.put("userId", user.getId());
 
-        System.out.println("✅ [AuthController] Login bem-sucedido: " + user.getEmail());
+        System.out.println("Login bem-sucedido: " + user.getEmail());
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
-        System.out.println("📥 [AuthController] Tentativa de registro: " + user.getEmail());
+        System.out.println("Tentativa de registro: " + user.getEmail());
 
         if (userService.buscarPorEmail(user.getEmail()).isPresent()) {
-            System.out.println("❌ [AuthController] Email já cadastrado");
+            System.out.println("Email já cadastrado");
             return ResponseEntity.badRequest().body(Map.of("error", "Email já cadastrado"));
         }
 
@@ -53,7 +53,7 @@ public class AuthController {
         response.put("userId", createdUser.getId());
         response.put("nome", createdUser.getNome());
 
-        System.out.println("✅ [AuthController] Usuário registrado: " + createdUser.getEmail());
+        System.out.println("Usuário registrado: " + createdUser.getEmail());
         return ResponseEntity.ok(response);
     }
 }

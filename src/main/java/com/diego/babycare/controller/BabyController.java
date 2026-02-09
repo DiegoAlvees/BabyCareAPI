@@ -63,4 +63,34 @@ public class BabyController {
         babyService.deletarBaby(babyId);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{babyId}")
+    public ResponseEntity<?> atualizarBaby(
+            @PathVariable Long babyId,
+            @RequestBody Map<String, Object> request
+    ) {
+        try {
+            Baby baby = babyService.buscarPorId(babyId)
+                    .orElseThrow(() -> new RuntimeException("Bebê não encontrado"));
+
+            if (request.containsKey("nome")) {
+                baby.setNome((String) request.get("nome"));
+            }
+
+            if (request.containsKey("dataNascimento")) {
+                baby.setDataNascimento(
+                        java.time.LocalDate.parse((String) request.get("dataNascimento"))
+                );
+            }
+
+            Baby atualizado = babyService.criarBaby(baby);
+            return ResponseEntity.ok(atualizado);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Erro ao atualizar bebê: " + e.getMessage()));
+        }
+    }
+
+
 }
