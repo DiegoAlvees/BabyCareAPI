@@ -1,13 +1,13 @@
-FROM eclipse-temurin:17-jdk
-
+# Build stage
+FROM gradle:8.5-jdk17 AS build
 WORKDIR /app
-
 COPY . .
+RUN gradle build -x test
 
-# Dá permissão de execução ao gradlew
-RUN chmod +x gradlew
+# Runtime stage
+FROM eclipse-temurin:17-jre
+WORKDIR /app
+COPY --from=build /app/build/libs/*.jar app.jar
 
-# Agora o build funciona
-RUN ./gradlew clean build -x test -x check
-
-CMD ["java", "-jar", "build/libs/babycare-0.0.1-SNAPSHOT.jar"]
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -23,16 +23,16 @@ public class BabyController {
             String nome = (String) request.get("nome");
             String dataNascimento = (String) request.get("dataNascimento");
 
-            // Pega o userId do objeto user aninhado
+
             Map<String, Object> userMap = (Map<String, Object>) request.get("user");
             Integer userIdInt = (Integer) userMap.get("id");
             Long userId = userIdInt.longValue();
 
-            // Busca o usuário
+
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new RuntimeException("Usuário não encontrado com ID: " + userId));
 
-            // Cria o bebê
+
             Baby baby = new Baby();
             baby.setNome(nome);
             baby.setDataNascimento(java.time.LocalDate.parse(dataNascimento));
